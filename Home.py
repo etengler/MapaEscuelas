@@ -3,38 +3,55 @@ import leafmap.foliumap as leafmap
 
 st.set_page_config(layout="wide")
 
-# Customize the sidebar
-markdown = """
-A Streamlit map template
-<https://github.com/opengeos/streamlit-map-template>
-"""
+# Configuración de la página
+st.title("Mapa de escuelas de Argentina")
 
-st.sidebar.title("About")
-st.sidebar.info(markdown)
-logo = "https://i.imgur.com/UbOXYAU.png"
-st.sidebar.image(logo)
+# Crear el mapa
+m = leafmap.Map(minimap_control=True)
 
-# Customize page title
-st.title("Streamlit for Geospatial Applications")
-
-st.markdown(
-    """
-    This multipage app template demonstrates various interactive web apps created using [streamlit](https://streamlit.io) and [leafmap](https://leafmap.org). It is an open-source project and you are very welcome to contribute to the [GitHub repository](https://github.com/opengeos/streamlit-map-template).
-    """
+# URLs de los servicios WMS
+escuelas_wms = (
+    "https://wms.ign.gob.ar/geoserver/wms?"
+    "crs=EPSG:4326&dpiMode=7&format=image/png&layers=ign:puntos_de_ciencia_y_educacion_020601&styles="
+)
+municipios_wms = (
+    "https://wms.ign.gob.ar/geoserver/wms?"
+    "crs=EPSG:4326&dpiMode=7&format=image/png&layers=ign:municipio&styles="
 )
 
-st.header("Instructions")
+# Agregar la capa de municipios al mapa
+m.add_wms_layer(
+    url=municipios_wms,
+    layers="ign:municipio",
+    name="Municipios",
+    format="image/png",
+    transparent=True,
+)
 
-markdown = """
-1. For the [GitHub repository](https://github.com/opengeos/streamlit-map-template) or [use it as a template](https://github.com/opengeos/streamlit-map-template/generate) for your own project.
-2. Customize the sidebar by changing the sidebar text and logo in each Python files.
-3. Find your favorite emoji from https://emojipedia.org.
-4. Add a new app to the `pages/` directory with an emoji in the file name, e.g., `1_🚀_Chart.py`.
+# Crear la interfaz para seleccionar la funcionalidad
+opcion = st.radio(
+    "Opciones de visualización:",
+    ("Ver todas las escuelas", "Filtrar escuelas por municipio"),
+)
 
-"""
+if opcion == "Ver todas las escuelas":
+    # Mostrar todas las escuelas
+    m.add_wms_layer(
+        url=escuelas_wms,
+        layers="ign:puntos_de_ciencia_y_educacion_020601",
+        name="Escuelas",
+        format="image/png",
+        transparent=True,
+    )
+else:
+    # Filtrar por municipio
+    st.info("Seleccione un municipio para filtrar las escuelas.")
+    municipios = ["Municipio1", "Municipio2", "Municipio3"]  # Reemplaza con los nombres reales
+    municipio_seleccionado = st.selectbox("Municipio:", municipios)
 
-st.markdown(markdown)
+    # En este caso, podrías necesitar lógica adicional para filtrar las escuelas
+    # relacionadas con el municipio seleccionado (no soportado directamente con WMS).
+    # Esto requiere un dataset procesado por separado.
 
-m = leafmap.Map(minimap_control=True)
-m.add_basemap("OpenTopoMap")
+# Mostrar el mapa
 m.to_streamlit(height=500)
