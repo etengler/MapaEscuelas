@@ -1,6 +1,7 @@
 import streamlit as st
 import leafmap.foliumap as leafmap
 import json
+import os
 
 st.set_page_config(layout="wide")
 
@@ -11,8 +12,8 @@ st.title("Mapa de escuelas de Argentina")
 m = leafmap.Map(minimap_control=True)
 
 # Cargar datos GeoJSON (asegúrate de tener los archivos locales o en URLs accesibles)
-municipios_geojson = "Recursos\municipios.geojson"  # Reemplaza con la ruta real o URL
-escuelas_geojson = "Recursos\escuelas.geojson"  # Reemplaza con la ruta real o URL
+municipios_geojson = "Recursos/municipios.geojson"  # Reemplaza con la ruta real o URL
+escuelas_geojson = "Recursos/escuelas.geojson"  # Reemplaza con la ruta real o URL
 
 # Cargar los datos GeoJSON de municipios
 with open(municipios_geojson, "r") as f:
